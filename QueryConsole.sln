@@ -5,9 +5,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryConsole.Resources", "Q
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryConsole.API", "QueryConsole.API\QueryConsole.API.csproj", "{872EEED4-5D32-45E4-A056-0D43B5ADAF79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPPlus", "EPPlus\EPPlus.csproj", "{7B288026-5502-4A39-BF41-77E086F3E4A3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryConsole.GUI", "QueryConsole.GUI\QueryConsole.GUI.csproj", "{DE5704E9-DDDF-44DB-B24C-BFC949D9154D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0A4BAF1D-4B0D-43CB-AA3D-B8F462D40B1F}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,16 +44,6 @@ Global
 		{872EEED4-5D32-45E4-A056-0D43B5ADAF79}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{872EEED4-5D32-45E4-A056-0D43B5ADAF79}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{872EEED4-5D32-45E4-A056-0D43B5ADAF79}.Release|x86.ActiveCfg = Release|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{7B288026-5502-4A39-BF41-77E086F3E4A3}.Release|x86.ActiveCfg = Release|Any CPU
 		{DE5704E9-DDDF-44DB-B24C-BFC949D9154D}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{DE5704E9-DDDF-44DB-B24C-BFC949D9154D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{DE5704E9-DDDF-44DB-B24C-BFC949D9154D}.Debug|Mixed Platforms.Build.0 = Debug|x86

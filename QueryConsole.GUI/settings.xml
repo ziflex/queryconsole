@@ -1,11 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <settings>
   <providers>
-    <provider name="Sql Client" value="System.Data.SqlClient">
-	    <connectionString name="test database" value="Data Source=localhost; Initial Catalog=test; User Id=user;Password=iddqd;"/>
-    </provider>
-    <provider name="Odbc" value="System.Data.ODBC">
-	    <connectionString name="test database" value="DSN=test;"/>
+    <provider name="SQL" value="System.Data.SqlClient">
+	    <connectionString name="the things" value="Data Source=localhost; Initial Catalog=TheThings; User Id=aspnet;Password=test;"/>
     </provider>
   </providers>  
 </settings>
