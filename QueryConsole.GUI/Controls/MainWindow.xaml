@@ -14,19 +14,22 @@
                 <MenuItem Name="miOpen" Header="Open" InputGestureText="Ctrl+O"/>
                 <Separator />
                 <MenuItem Name="miClose" Header="Close" InputGestureText="Ctrl+F4"/>
-                <MenuItem Name="miCloseAll" Header="Close All" />
-                <MenuItem Name="miCloseAllButThis" Header="Close All But This" />
+                <MenuItem Name="miCloseAll" Header="Close all" />
+                <MenuItem Name="miCloseAllButThis" Header="Close all but this" />
                 <Separator />
                 <MenuItem Name="miSave" Header="Save" InputGestureText="Ctrl+S"/>
                 <MenuItem Name="miSaveAs" Header="Save as..." />
-                <MenuItem Name="miSaveAll" Header="Save All" />
+                <MenuItem Name="miSaveAll" Header="Save all" />
                 <Separator />
                 <MenuItem Name="miExit" Header="Exit" />
             </MenuItem>
             <MenuItem Name="smQuery" Header="_Query">
-                <MenuItem Name="miExec" Header="Execute Query" InputGestureText="F5"/>
+                <MenuItem Name="miExec" Header="Execute query" InputGestureText="F5"/>
                 <Separator />
                 <MenuItem Name="miExportToExcel" Header="Export to excel"/>
+            </MenuItem>
+            <MenuItem Name="smSettings" Header="_Settings">
+                <MenuItem Name="miConfigure" Header="Configure"/>
             </MenuItem>
         </Menu>
         <Label Grid.Row="2" Name="EventLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>

@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Conf_AttributeDoesntExist" xml:space="preserve">
-    <value>Не найден аттрибут {0} в элементе {1}!</value>
+    <value>Not found {0} attribute in the element {1}!</value>
   </data>
   <data name="Conf_ElementDoesntExist" xml:space="preserve">
-    <value>Не найден элемент {0}!</value>
+    <value>Element {0} not found!</value>
   </data>
   <data name="Conf_Error" xml:space="preserve">
-    <value>Не верно составлен конфигурационный файл!</value>
+    <value>Configuration file has errors!</value>
   </data>
   <data name="Data_ProviderNotFound" xml:space="preserve">
-    <value>Указанный провайдер не найден!</value>
+    <value>Current data provider not found!</value>
   </data>
   <data name="IO_FileDoesntExist" xml:space="preserve">
-    <value>Не найден файл {0}!</value>
+    <value>File {0} not found!</value>
   </data>
   <data name="Q_ConStrSelectionError" xml:space="preserve">
-    <value>Выберите базу!</value>
+    <value>Choose database!</value>
   </data>
   <data name="Q_EmptyQueryError" xml:space="preserve">
-    <value>Поле запроса пустое!</value>
+    <value>Query field is empty!</value>
   </data>
   <data name="Q_ProviderSelectionError" xml:space="preserve">
-    <value>Выберите провайдера!</value>
+    <value>Choose data provider!</value>
   </data>
 </root>
