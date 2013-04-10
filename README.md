@@ -3,7 +3,7 @@
 
 Query Console
 
-Simple .NET SQL console thas uses different dataproviders.
+Simple .NET SQL console can use different dataproviders.
 
 ##How to configure
 
