@@ -1,16 +1,14 @@
 .NET Query Console
 ============
 
-Query Console
-
-Simple .NET SQL console can use different dataproviders.
+Simple .NET SQL console for query execution using different data providers.
 
 ##How to configure
 
 .NET Query Console supports multiple connection strings for each data provider.
 All settings are located in 'settings.xml'. 
 
-Here is a file structure:
+Here is a example of possible file structure:
 
   ```
 <settings>
