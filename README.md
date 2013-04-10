@@ -6,9 +6,9 @@ Simple .NET SQL console for query execution using different data providers.
 ##How to configure
 
 .NET Query Console supports multiple connection strings for each data provider.
-All settings are located in 'settings.xml'. 
+All settings are located in 'settings.xml' file. 
 
-Here is a example of possible file structure:
+Here is an example of possible file structure:
 
   ```
 <settings>
@@ -27,5 +27,5 @@ Here is a example of possible file structure:
 
 ##Dependencies
 ============
-EPPlus
+EPPlus is used for exporting query results to Excel.
 https://github.com/pruiz/EPPlus.git
