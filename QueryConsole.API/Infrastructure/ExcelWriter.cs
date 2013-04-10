@@ -1,9 +1,8 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ExcelWriter.cs" company="">
-// TODO: Update copyright text.
+//   
 // </copyright>
-// -----------------------------------------------------------------------
-
+// --------------------------------------------------------------------------------------------------------------------
 namespace QueryConsole.API.Infrastructure
 {
     using System.Data;
@@ -11,23 +10,38 @@ namespace QueryConsole.API.Infrastructure
 
     using OfficeOpenXml;
 
-    /// <summary>
-    /// TODO: Update summary.
-    /// </summary>
     public class ExcelWriter
     {
-        #region Properties
+        #region Fields
 
-        private DataTable _dataSource;
+        private readonly DataTable _dataSource;
 
-        private string _fileName;
+        private readonly string _fileName;
 
         #endregion
 
-        #region Constructors
+        #region Constructors and Destructors
 
-        public ExcelWriter(DataTable source) : this(source, string.Empty) {}
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExcelWriter"/> class. 
+        /// </summary>
+        /// <param name="source">
+        /// data to export
+        /// </param>
+        public ExcelWriter(DataTable source)
+            : this(source, string.Empty)
+        {
+        }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExcelWriter"/> class. 
+        /// </summary>
+        /// <param name="source">
+        /// data to export
+        /// </param>
+        /// <param name="fileName">
+        /// File name
+        /// </param>
         public ExcelWriter(DataTable source, string fileName)
         {
             this._dataSource = source;
@@ -36,8 +50,12 @@ namespace QueryConsole.API.Infrastructure
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods and Operators
 
+        /// <summary>
+        /// Export
+        /// </summary>
+        /// <returns>File info</returns>
         public FileInfo Execute()
         {
             var newFile = new FileInfo(this._fileName);
@@ -59,23 +77,12 @@ namespace QueryConsole.API.Infrastructure
 
         #endregion
 
-        #region Private Methods
+        #region Methods
 
         private void ExecuteInternal(ExcelWorksheet ws)
         {
             this.FillHeaders(ws);
             this.FillContent(ws);
-        }
-
-        private void FillHeaders(ExcelWorksheet ws)
-        {
-            const int rowsCounter = 1;
-            int columnsCounter = 1;
-            foreach (DataColumn column in this._dataSource.Columns)
-            {
-                ws.Cells[rowsCounter, columnsCounter].Value = column.ColumnName;
-                columnsCounter++;
-            }
         }
 
         private void FillContent(ExcelWorksheet ws)
@@ -92,6 +99,17 @@ namespace QueryConsole.API.Infrastructure
                 }
 
                 rowsCounter++;
+            }
+        }
+
+        private void FillHeaders(ExcelWorksheet ws)
+        {
+            const int RowsCounter = 1;
+            int columnsCounter = 1;
+            foreach (DataColumn column in this._dataSource.Columns)
+            {
+                ws.Cells[RowsCounter, columnsCounter].Value = column.ColumnName;
+                columnsCounter++;
             }
         }
 

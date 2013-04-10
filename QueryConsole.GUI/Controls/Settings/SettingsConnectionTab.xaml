@@ -1,0 +1,42 @@
+﻿<TabItem x:Class="QueryConsole.Controls.Settings.SettingsConnectionTab"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="800"
+         Background="WhiteSmoke" Header="Connection">
+        <Grid Name="MainGrid">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"></RowDefinition>
+      <RowDefinition Height="300*"></RowDefinition>
+      <RowDefinition Height="300*"></RowDefinition>
+    </Grid.RowDefinitions>
+    <GroupBox Header="Data providers" Grid.Row="1">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"></RowDefinition>
+          <RowDefinition Height="270*"></RowDefinition>
+          <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+        <DataGrid Grid.Row="1" Name="ProvidersList"></DataGrid>
+        <Button Grid.Row="2" Name="btnAddProvider" Content="+" Width="20" VerticalAlignment="Top"
+                HorizontalAlignment="Right" Margin="0,8,30,0"></Button>
+        <Button Grid.Row="2" Name="btnRemoveProvider" Content="-" Width="20" VerticalAlignment="Top"
+                HorizontalAlignment="Right" Margin="0,8,0,0"></Button>
+      </Grid>
+    </GroupBox>
+    <GroupBox Header="Connection strings" Grid.Row="2">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"></RowDefinition>
+          <RowDefinition Height="270*"></RowDefinition>
+          <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+        <DataGrid Grid.Row="1"></DataGrid>
+        <Button Grid.Row="2" Name="btnAddConnection" Content="+" Width="20" VerticalAlignment="Top"
+                HorizontalAlignment="Right" Margin="0,8,30,0"></Button>
+        <Button Grid.Row="2" Name="btnRemoveConnection" Content="-" Width="20" VerticalAlignment="Top"
+                HorizontalAlignment="Right" Margin="0,8,0,0"></Button>
+      </Grid>
+    </GroupBox>
+  </Grid>
+</TabItem>

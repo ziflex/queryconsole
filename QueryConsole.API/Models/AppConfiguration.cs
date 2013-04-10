@@ -1,125 +1,167 @@
-﻿namespace QueryConsole.API.Models
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AppConfiguration.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The app configuration.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+namespace QueryConsole.API.Models
 {
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Configuration;
+    using System.IO;
     using System.Xml.Linq;
 
     using QueryConsole.Resources;
 
-    public class AppConfiguration
+    public class AppConfiguration : IConfiguration
     {
-        #region Members
+        #region Fields
 
-        private readonly string ConfigPath;
-
-        private IEnumerable<DbProvider> _providers;
+        private FileInfo _configFile;
 
         #endregion
 
-        #region Properties
+        #region Public Properties
 
-        public IEnumerable<DbProvider> DbProviders
+        /// <summary>
+        /// Collection of database providers
+        /// </summary>
+        public ObservableCollection<DbProvider> DbProviders { get; private set; }
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// Loads configuration file
+        /// </summary>
+        /// <param name="configuration">configuration file info</param>
+        public void Load(FileInfo configuration)
         {
-            get
+            this._configFile = configuration;
+            this.Refresh();
+        }
+
+        /// <summary>
+        /// Reloads configuration file
+        /// </summary>
+        public void Refresh()
+        {
+            if (!this._configFile.Exists)
             {
-                return this._providers;
+                return;
             }
-        }
 
-        #endregion
-
-        #region Constructors
-
-        public AppConfiguration(string configPath)
-        {
-            this.ConfigPath = configPath;
-            this.Init();
-        }
-
-        private void Init()
-        {
-            XDocument doc = XDocument.Load(this.ConfigPath);
+            XDocument doc = XDocument.Load(this._configFile.FullName);
             this.ValidateConfFile(doc);
 
             XElement settings = doc.Element("settings");
-            this._providers = this.GetProviders(settings);
+            this.DbProviders = this.GetProviders(settings);
+        }
+
+        /// <summary>
+        /// Saves changes in configuration file
+        /// </summary>
+        public void Save()
+        {
         }
 
         #endregion
 
-        #region Private Methods
+        #region Methods
 
-        private void ValidateConfFile(XDocument doc)
+        /// <summary>
+        /// Gets providers
+        /// </summary>
+        /// <param name="settings">node</param>
+        /// <returns>Provider collection</returns>
+        private ObservableCollection<DbProvider> GetProviders(XElement settings)
         {
-            if (doc.Element("settings") == null)
-            {
-                throw new ConfigurationException(Resource.Conf_ElementDoesntExistFormat("settings"));
-            }
-
-            if (doc.Element("settings").Element("providers") == null)
-            {
-                throw new ConfigurationException(Resource.Conf_ElementDoesntExistFormat("providers"));
-            }
-        }
-
-        private void ValidateProviderElement(XElement provider)
-        {
-            if (provider == null)
-            {
-                throw new ConfigurationException(Resource.Conf_ElementDoesntExistFormat("provider"));
-            }
-
-            if (provider.Attribute("name") == null)
-            {
-                throw new ConfigurationException(Resource.Conf_AttributeDoesntExistFormat("name", "provider"));
-            }
-
-            if (provider.Attribute("value") == null)
-            {
-                throw new ConfigurationException(Resource.Conf_AttributeDoesntExistFormat("value", "provider"));
-            }
-        }
-
-        private void ValidateConnStrElement(XElement connStr)
-        {
-            if (connStr == null)
-            {
-                throw new ConfigurationException(Resource.Conf_ElementDoesntExistFormat("connectionString"));
-            }
-
-            if (connStr.Attribute("name") == null)
-            {
-                throw new ConfigurationException(Resource.Conf_AttributeDoesntExistFormat("name", "connectionString"));
-            }
-
-            if (connStr.Attribute("value") == null)
-            {
-                throw new ConfigurationException(Resource.Conf_AttributeDoesntExistFormat("value", "connectionString"));
-            }
-        }
-
-        private IEnumerable<DbProvider> GetProviders(XElement settings)
-        {
-            List<DbProvider> result = new List<DbProvider>();
+            var result = new ObservableCollection<DbProvider>();
 
             XElement providers = settings.Element("providers");
 
             foreach (XElement provider in providers.Elements())
             {
                 this.ValidateProviderElement(provider);
-                
-                List<DbConnectionString> connStrList = new List<DbConnectionString>();
+
+                var connStrList = new ObservableCollection<DbConnectionString>();
 
                 foreach (XElement connStr in provider.Elements())
                 {
                     this.ValidateConnStrElement(connStr);
-                    connStrList.Add(new DbConnectionString(connStr.Attribute("name").Value, connStr.Attribute("value").Value));
+                    connStrList.Add(
+                        new DbConnectionString(connStr.Attribute("name").Value, connStr.Attribute("value").Value));
                 }
 
-                result.Add(new DbProvider(provider.Attribute("name").Value, provider.Attribute("value").Value, connStrList));
+                result.Add(
+                    new DbProvider(provider.Attribute("name").Value, provider.Attribute("value").Value, connStrList));
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Validates configuration file
+        /// </summary>
+        /// <param name="doc">configuration xml-file</param>
+        private void ValidateConfFile(XDocument doc)
+        {
+            if (doc.Element("settings") == null)
+            {
+                throw new ConfigurationException(string.Format(Resource.Conf_ElementDoesntExist, "settings"));
+            }
+
+            if (doc.Element("settings").Element("providers") == null)
+            {
+                throw new ConfigurationException(string.Format(Resource.Conf_ElementDoesntExist, "providers"));
+            }
+        }
+
+        /// <summary>
+        /// Validates connection string node
+        /// </summary>
+        /// <param name="connStr">xml-node</param>
+        private void ValidateConnStrElement(XElement connStr)
+        {
+            if (connStr == null)
+            {
+                throw new ConfigurationException(string.Format(Resource.Conf_ElementDoesntExist, "connectionString"));
+            }
+
+            if (connStr.Attribute("name") == null)
+            {
+                throw new ConfigurationException(string.Format(Resource.Conf_AttributeDoesntExist, "name", "connectionString"));
+            }
+
+            if (connStr.Attribute("value") == null)
+            {
+                throw new ConfigurationException(string.Format(Resource.Conf_AttributeDoesntExist, "value", "connectionString"));
+            }
+        }
+
+        /// <summary>
+        /// Validates provider node
+        /// </summary>
+        /// <param name="provider">xml-node</param>
+        private void ValidateProviderElement(XElement provider)
+        {
+            if (provider == null)
+            {
+                throw new ConfigurationException(string.Format(Resource.Conf_ElementDoesntExist, "provider"));
+            }
+
+            if (provider.Attribute("name") == null)
+            {
+                throw new ConfigurationException(string.Format(Resource.Conf_AttributeDoesntExist, "name", "provider"));
+            }
+
+            if (provider.Attribute("value") == null)
+            {
+                throw new ConfigurationException(string.Format(Resource.Conf_AttributeDoesntExist, "value", "provider"));
+            }
         }
 
         #endregion

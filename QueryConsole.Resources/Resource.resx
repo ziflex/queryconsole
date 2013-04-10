@@ -121,16 +121,22 @@
     <value>Not found {0} attribute in the element {1}!</value>
   </data>
   <data name="Conf_ElementDoesntExist" xml:space="preserve">
-    <value>Element {0} not found!</value>
+    <value>Element {0} is not found!</value>
   </data>
   <data name="Conf_Error" xml:space="preserve">
     <value>Configuration file has errors!</value>
   </data>
   <data name="Data_ProviderNotFound" xml:space="preserve">
-    <value>Current data provider not found!</value>
+    <value>Current data provider is not found!</value>
+  </data>
+  <data name="Export_Fail" xml:space="preserve">
+    <value>Export has been failed!</value>
+  </data>
+  <data name="Export_Success" xml:space="preserve">
+    <value>Export has been successful!</value>
   </data>
   <data name="IO_FileDoesntExist" xml:space="preserve">
-    <value>File {0} not found!</value>
+    <value>File {0} is not found!</value>
   </data>
   <data name="Q_ConStrSelectionError" xml:space="preserve">
     <value>Choose database!</value>
@@ -140,5 +146,8 @@
   </data>
   <data name="Q_ProviderSelectionError" xml:space="preserve">
     <value>Choose data provider!</value>
+  </data>
+  <data name="Q_Result_NonQuery" xml:space="preserve">
+    <value>Command succeeded</value>
   </data>
 </root>

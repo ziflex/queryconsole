@@ -1,8 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <settings>
   <providers>
     <provider name="SQL" value="System.Data.SqlClient">
-	    <connectionString name="the things" value="Data Source=localhost; Initial Catalog=TheThings; User Id=aspnet;Password=test;"/>
+      <connectionString name="the things"
+                        value="Data Source=localhost; Initial Catalog=TheThings; User Id=aspnet;Password=test;" />
     </provider>
-  </providers>  
+  </providers>
 </settings>

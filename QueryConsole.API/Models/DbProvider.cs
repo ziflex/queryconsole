@@ -1,55 +1,56 @@
-﻿namespace QueryConsole.API.Models
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DbProvider.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The db provider.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+namespace QueryConsole.API.Models
 {
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
 
     public class DbProvider
     {
-        #region Members
+        #region Constructors and Destructors
 
-        private readonly string _name;
-
-        private readonly string _value;
-
-        private IEnumerable<DbConnectionString> _connectionStrings;
-
-        #endregion
-
-        #region Properties
-
-        public string Name
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DbProvider"/> class. 
+        /// </summary>
+        /// <param name="name">
+        /// Provider name
+        /// </param>
+        /// <param name="value">
+        /// Provider value
+        /// </param>
+        /// <param name="connectionStrings">
+        /// List of connections
+        /// </param>
+        public DbProvider(string name, string value, ObservableCollection<DbConnectionString> connectionStrings)
         {
-            get
-            {
-                return this._name;
-            }
-        }
-
-        public string Value
-        {
-            get
-            {
-                return this._value;
-            }
-        }
-
-        public IEnumerable<DbConnectionString> ConnectionStrings
-        {
-            get
-            {
-                return this._connectionStrings;
-            }
+            this.Name = name;
+            this.Value = value;
+            this.ConnectionStrings = connectionStrings;
         }
 
         #endregion
 
-        #region Constructor
+        #region Public Properties
 
-        public DbProvider(string name, string value, IEnumerable<DbConnectionString> connectionStrings)
-        {
-            this._name = name;
-            this._value = value;
-            this._connectionStrings = connectionStrings;
-        }
+        /// <summary>
+        /// Collection of connection strings
+        /// </summary>
+        public ObservableCollection<DbConnectionString> ConnectionStrings { get; private set; }
+
+        /// <summary>
+        /// Current name
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// Current value
+        /// </summary>
+        public string Value { get; private set; }
 
         #endregion
     }

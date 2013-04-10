@@ -1,126 +1,38 @@
-﻿<TabItem x:Class="QueryConsole.Controls.QueryTabItem"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="800" Background="WhiteSmoke">
-        <Grid Name="MainGrid">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Name="TopCommandPanel" Height="30"></RowDefinition>
-                <RowDefinition Name="QueryWindow"     Height="240*"></RowDefinition>
-                <RowDefinition Name="MidCommandPanel" Height="30"></RowDefinition>
-                <RowDefinition Name="ResultRow"       Height="240*"></RowDefinition>
-            </Grid.RowDefinitions>
-        <Button 
-            Name="btnRun" 
-            Grid.Row="1" 
-            Width="50px" 
-            Height="22px" 
-            Margin="0, 0, 0, 3" 
-            HorizontalAlignment="Left" 
-            Content="Run" >
-        </Button>
-        <Label
-            Grid.Row="1"
-            Content="Provider"
-            Margin="60, 0, 0, 3" 
-            >
-        </Label>
-        <ComboBox
-            Grid.Row="1" 
-            Name="ProviderList" 
-            Height="22px" 
-            Margin="120, 0, 0, 3" 
-            Width="100px"
-            HorizontalAlignment="Left" 
-            DisplayMemberPath="Name"
-            ></ComboBox>
-            <Label 
-            Grid.Row ="1" 
-            Content="Database" 
-            Margin="240, 0, 0, 3" 
-            HorizontalAlignment="Left">
-        </Label>
-        <ComboBox 
-            Grid.Row="1" 
-            Name="ConStrList" 
-            Height="22px" 
-            Margin="300, 0, 40, 3" 
-            HorizontalAlignment="Stretch" 
-            DisplayMemberPath="Name">
-        </ComboBox>
-        <Button 
-                Name="btnClose" 
-                Grid.Row="1" 
-                Width="25px" 
-                Height="22px" 
-                Content="X" 
-                Margin="0, 0, 0, 3"  
-                HorizontalAlignment="Right" 
-                Background="{x:Null}" 
-                Focusable="False" 
-                FontWeight="Bold" >
-        </Button>
-        <TextBox 
-            Name="QueryText" 
-            Grid.Row="2" 
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch" 
-            TextWrapping="Wrap" 
-            AcceptsReturn="True" 
-            AcceptsTab="True" 
-            VerticalScrollBarVisibility="Auto">
-        </TextBox>
-        <GridSplitter
-                Name="GridSplitter"
-                ResizeDirection="Rows"
-                Grid.Column="0"
-                Grid.ColumnSpan="10"
-                Grid.Row="3"
-                Width="Auto"
-                Height="3"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Margin="0"
-                Background="WhiteSmoke"
-                ShowsPreview="True">
-        </GridSplitter>
-        <Label 
-            Name="QueryTimeSpan" 
-            Grid.Row="3" 
-            Height="22px"
-            HorizontalAlignment="Left">
-        </Label>
-        <Button 
-            Name="btnHidden" 
-            Content="Show" 
-            Grid.Row="3" 
-            Width="50px" 
-            Height="22px" 
-            Margin="0, 0, 0, 0" 
-            HorizontalAlignment="Right" 
-            Background="{x:Null}" 
-            Focusable="False" >
-        </Button>
-        <DataGrid 
-            Name="QueryResult" 
-            Grid.Row="4" 
-            Visibility="Visible"
-            HorizontalAlignment="Stretch" 
-            VerticalAlignment="Stretch">
-        </DataGrid>
-        <TextBox 
-            Name="ErrorText" 
-            Grid.Row="4" 
-            IsEnabled="True" 
-            IsReadOnly="True"
-            Visibility="Hidden" 
-            HorizontalAlignment="Stretch" 
-            VerticalAlignment="Stretch"  
-            TextWrapping="Wrap" 
-            VerticalScrollBarVisibility="Auto"
-            Background="WhiteSmoke">
-        </TextBox>
-    </Grid>
+﻿<TabItem x:Class="QueryConsole.Controls.QueryTabItem" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="800"
+         Background="WhiteSmoke">
+  <Grid Name="MainGrid">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"></RowDefinition>
+      <RowDefinition Name="TopCommandPanel" Height="30"></RowDefinition>
+      <RowDefinition Name="QueryWindow" Height="240*"></RowDefinition>
+      <RowDefinition Name="MidCommandPanel" Height="30"></RowDefinition>
+      <RowDefinition Name="ResultRow" Height="240*"></RowDefinition>
+    </Grid.RowDefinitions>
+    <Button Name="btnRun" Grid.Row="1" Width="50px" Height="22px" Margin="0, 0, 0, 3" HorizontalAlignment="Left"
+            Content="Run"></Button>
+    <Label Grid.Row="1" Content="Provider" Margin="60, 0, 0, 3"></Label>
+    <ComboBox Grid.Row="1" Name="ProviderList" Height="22px" Margin="120, 0, 0, 3" Width="100px"
+              HorizontalAlignment="Left" DisplayMemberPath="Name"></ComboBox>
+    <Label Grid.Row="1" Content="Database" Margin="240, 0, 0, 3" HorizontalAlignment="Left"></Label>
+    <ComboBox Grid.Row="1" Name="ConStrList" Height="22px" Margin="300, 0, 40, 3" HorizontalAlignment="Stretch"
+              DisplayMemberPath="Name"></ComboBox>
+    <Button Name="btnClose" Grid.Row="1" Width="25px" Height="22px" Content="X" Margin="0, 0, 0, 3"
+            HorizontalAlignment="Right" Background="{x:Null}" Focusable="False" FontWeight="Bold"></Button>
+    <TextBox Name="QueryText" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto"></TextBox>
+    <GridSplitter Name="GridSplitter" ResizeDirection="Rows" Grid.Column="0" Grid.ColumnSpan="10" Grid.Row="3"
+                  Width="Auto" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" Background="WhiteSmoke"
+                  ShowsPreview="True"></GridSplitter>
+    <Label Name="QueryTimeSpan" Grid.Row="3" Height="22px" HorizontalAlignment="Left"></Label>
+    <Button Name="btnHidden" Content="Show" Grid.Row="3" Width="50px" Height="22px" Margin="0, 0, 0, 0"
+            HorizontalAlignment="Right" Background="{x:Null}" Focusable="False"></Button>
+    <DataGrid Name="QueryResult" Grid.Row="4" Visibility="Visible" HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"></DataGrid>
+    <TextBox Name="ErrorText" Grid.Row="4" IsEnabled="True" IsReadOnly="True" Visibility="Hidden"
+             HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+             Background="WhiteSmoke"></TextBox>
+  </Grid>
 </TabItem>

@@ -1,268 +1,232 @@
-﻿namespace QueryConsole.Controls
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MainWindow.xaml.cs" company="">
+//   
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+namespace QueryConsole.Controls
 {
-    using System;
+    #region
+
     using System.IO;
     using System.Text;
     using System.Windows;
     using System.Windows.Forms;
     using System.Windows.Input;
 
+    using QueryConsole.Controls.Settings;
+
     using MessageBox = System.Windows.MessageBox;
+    using Resource = QueryConsole.Resources.Resource;
+
+    #endregion
 
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Application window
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Properties
-
-        private ICommand _cmdNewQuery;
+        #region Fields
 
         private ICommand _cmdCloneQuery;
-
-        private ICommand _cmdOpenQuery;
-
-        private ICommand _cmdCloseQuery;
 
         private ICommand _cmdCloseAllQueries;
 
         private ICommand _cmdCloseAllQueriesButThis;
 
+        private ICommand _cmdCloseQuery;
+
+        private ICommand _cmdConfigureSettings;
+
+        private ICommand _cmdExecuteQuery;
+
+        private ICommand _cmdExit;
+
+        private ICommand _cmdExportToExcel;
+
+        private ICommand _cmdNewQuery;
+
+        private ICommand _cmdOpenQuery;
+
+        private ICommand _cmdSaveAllQueries;
+
         private ICommand _cmdSaveQuery;
 
         private ICommand _cmdSaveQueryAs;
 
-        private ICommand _cmdSaveAllQueries;
+        private int _itemIndexCounter;
 
-        private ICommand _cmdExecuteQuery;
+        private OpenFileDialog _openDialog;
 
-        private ICommand _cmdExportToExcel;
-
-        private ICommand _cmdExit;
-
-        private SaveFileDialog SaveDialog { get; set; }
-
-        private OpenFileDialog OpenDialog { get; set; }
-
-        private int ItemIndexCounter { get; set; }
+        private SaveFileDialog _saveDialog;
 
         #endregion
 
-        #region Constructor
+        #region Constructors and Destructors
 
+        /// <summary>
+        /// starting point
+        /// </summary>
         public MainWindow()
         {
             this.InitializeComponent();
 
-            // Создаем объекты для работы
+            // initilize objects for work
             this.InitializeObjects();
 
-            // Создаем новую закладку
+            // create new tab as default
             this.CreateNewTab(this.GenerateNewTabName());
 
-            // Создаем подписки на события
-            this.SubscribeEventHandlers();
-        }
-
-        private void InitializeObjects()
-        {
-            this.InitFileDialogs();
-            this.InitCommands();
-            this.BindCommands();
-            this.InitMenu();
-            this.BindMenuItems();
-            this.BindInputs();
-        }
-
-        private void InitFileDialogs()
-        {
-            this.SaveDialog = new SaveFileDialog
-                {
-                    CheckPathExists = true,
-                    CreatePrompt = true,
-                    OverwritePrompt = true
-                };
-            this.OpenDialog = new OpenFileDialog();
-        }
-
-        private void InitCommands()
-        {
-            this._cmdNewQuery = new RoutedCommand("NewQueryCommand", this.GetType());
-            this._cmdCloneQuery = new RoutedCommand("CloneQueryCommand", this.GetType());
-            this._cmdOpenQuery = new RoutedCommand("OpenQueryCommand", this.GetType());
-            this._cmdCloseQuery = new RoutedCommand("CloseQueryCommand", this.GetType());
-            this._cmdCloseAllQueries = new RoutedCommand("CloseAllQueries", this.GetType());
-            this._cmdCloseAllQueriesButThis = new RoutedCommand("CloseAllQueriesButThisCommand", this.GetType());
-            this._cmdSaveQuery = new RoutedCommand("SaveQueryCommand", this.GetType());
-            this._cmdSaveQueryAs = new RoutedCommand("SaveQueryAs", this.GetType());
-            this._cmdSaveAllQueries = new RoutedCommand("SaveAllQueriesCommand", this.GetType());
-            this._cmdExecuteQuery = new RoutedCommand("ExecuteCommand", this.GetType());
-            this._cmdExportToExcel = new RoutedCommand("ExportToExcelCommand", this.GetType());
-            this._cmdExit = new RoutedCommand("ExitCommand", this.GetType());
-        }
-
-        private void BindCommands()
-        {
-            this.CommandBindings.Add(new CommandBinding(this._cmdNewQuery, (sender, args) => this.NewTab()));
-            this.CommandBindings.Add(new CommandBinding(this._cmdCloneQuery, (sender, args) => this.CloneTab((QueryTabItem)this.QueryTabControl.SelectedItem)));
-            this.CommandBindings.Add(new CommandBinding(this._cmdOpenQuery, (sender, args) => this.OpenQuery()));
-            this.CommandBindings.Add(new CommandBinding(this._cmdCloseQuery, (sender, args) => this.CloseTab((QueryTabItem)this.QueryTabControl.SelectedItem)));
-            this.CommandBindings.Add(new CommandBinding(this._cmdCloseAllQueries, (sender, args) => this.CloseAllTabs()));
-            this.CommandBindings.Add(new CommandBinding(this._cmdCloseAllQueriesButThis, (sender, args) => this.CloseAllTabsButThis((QueryTabItem)this.QueryTabControl.SelectedItem)));
-            this.CommandBindings.Add(new CommandBinding(this._cmdSaveQuery, (sender, args) => this.SaveQuery((QueryTabItem)this.QueryTabControl.SelectedItem)));
-            this.CommandBindings.Add(new CommandBinding(this._cmdSaveQueryAs, (sender, args) => this.SaveQueryAs((QueryTabItem)this.QueryTabControl.SelectedItem)));
-            this.CommandBindings.Add(new CommandBinding(this._cmdSaveAllQueries, (sender, args) => this.SaveAllQueries()));
-            this.CommandBindings.Add(new CommandBinding(this._cmdExecuteQuery, (sender, args) => this.Execute((QueryTabItem)this.QueryTabControl.SelectedItem)));
-            this.CommandBindings.Add(new CommandBinding(this._cmdExportToExcel, (sender, args) => this.ExportToExcel((QueryTabItem)this.QueryTabControl.SelectedItem)));
-            this.CommandBindings.Add(new CommandBinding(this._cmdExit, (sender, args) => this.Close()));
-        }
-
-        private void InitMenu()
-        {
-            this.miNew.IsEnabled = true;
-            this.smFile.PreviewMouseDown += (sender, args) =>
-            {
-                bool isEnable = this.QueryTabControl.Items.Count != 0;
-                this.miClose.IsEnabled = isEnable;
-                this.miCloseAll.IsEnabled = isEnable;
-                this.miSave.IsEnabled = isEnable;
-                this.miSaveAs.IsEnabled = isEnable;
-                this.miSaveAll.IsEnabled = isEnable;
-
-                // Доп проверка для нового файла
-                if (isEnable)
-                {
-                    QueryTabItem queryTabItem = (QueryTabItem)this.QueryTabControl.SelectedItem;
-                    this.miSave.IsEnabled = !string.IsNullOrWhiteSpace(queryTabItem.FilePath);
-                }
-            };
-
-            this.smQuery.PreviewMouseDown += (sender, args) =>
-            {
-                bool isEnable = this.QueryTabControl.Items.Count != 0;
-                this.miExec.IsEnabled = isEnable;
-
-                if (isEnable)
-                {
-                    QueryTabItem queryTabItem = (QueryTabItem)this.QueryTabControl.SelectedItem;
-                    this.miExec.IsEnabled = !string.IsNullOrWhiteSpace(queryTabItem.QueryText.Text);
-                    this.miExportToExcel.IsEnabled = queryTabItem.QueryResult.ItemsSource != null;
-                }
-            };
-        }
-
-        private void BindMenuItems()
-        {
-            // Menu
-            this.miNew.Command = this._cmdNewQuery;
-            this.miClone.Command = this._cmdCloneQuery;
-            this.miOpen.Command = this._cmdOpenQuery;
-            this.miClose.Command = this._cmdCloseQuery;
-            this.miCloseAll.Command = this._cmdCloseAllQueries;
-            this.miCloseAllButThis.Command = this._cmdCloseAllQueriesButThis;
-            this.miSave.Command = this._cmdSaveQuery;
-            this.miSaveAs.Command = this._cmdSaveQueryAs;
-            this.miSaveAll.Command = this._cmdSaveAllQueries;
-            this.miExec.Command = this._cmdExecuteQuery;
-            this.miExportToExcel.Command = this._cmdExportToExcel;
-            this.miExit.Command = this._cmdExit;
-        }
-
-        private void BindInputs()
-        {
-            this.InputBindings.Add(new KeyBinding(this._cmdNewQuery, Key.N, ModifierKeys.Control));
-            this.InputBindings.Add(new KeyBinding(this._cmdOpenQuery, Key.O, ModifierKeys.Control));
-            this.InputBindings.Add(new KeyBinding(this._cmdCloseQuery, Key.F4, ModifierKeys.Control));
-            this.InputBindings.Add(new KeyBinding(this._cmdSaveQuery, Key.S, ModifierKeys.Control));
-            this.InputBindings.Add(new KeyBinding(this._cmdExecuteQuery, Key.F5, ModifierKeys.None));
+            // create mouse events handlers
+            this.BindMouseEventHandlers();
         }
 
         #endregion
 
-        #region Common Methods
+        #region Methods
 
-        private void CreateNewTab(string name, string text = null, string filePath = null)
+        /// <summary>
+        /// Binds menu commands to handlers
+        /// </summary>
+        private void BindCommands()
         {
-            this.ItemIndexCounter++;
-            QueryTabItem newTab            = new QueryTabItem(this.ItemIndexCounter, name, text, filePath);
-            newTab.CloseEvent              += this.CloseTab;
-            newTab.CloseAllButThisEvent    += this.CloseAllTabsButThis;
-            newTab.SaveEvent               += this.SaveQuery;
-            newTab.SaveAsEvent             += this.SaveQueryAs;
-            newTab.NewEvent                += tab => this.NewTab();
-            newTab.CloneEvent              += this.CloneTab;
+            // create new tab
+            this.CommandBindings.Add(new CommandBinding(this._cmdNewQuery, (sender, args) => this.NewTab()));
 
-            this.QueryTabControl.Items.Add(newTab);
-            this.QueryTabControl.SelectedItem = newTab;
-        }
+            // clone current tab
+            this.CommandBindings.Add(
+                new CommandBinding(
+                    this._cmdCloneQuery, 
+                    (sender, args) => this.CloneTab((QueryTabItem)this.QueryTabControl.SelectedItem)));
 
-        private FileInfo SaveFile(string filePath, string fileBody)
-        {
-            // Создаем новый файл
-            using (FileStream fs = File.Create(filePath))
-            {
-                byte[] info = new UTF8Encoding(true).GetBytes(fileBody);
-                fs.Write(info, 0, info.Length);
-            }
+            // open saved query in new tab
+            this.CommandBindings.Add(new CommandBinding(this._cmdOpenQuery, (sender, args) => this.OpenQuery()));
 
-            return new FileInfo(filePath);
-        }
+            // close current tab
+            this.CommandBindings.Add(
+                new CommandBinding(
+                    this._cmdCloseQuery, 
+                    (sender, args) => this.CloseTab((QueryTabItem)this.QueryTabControl.SelectedItem)));
 
-        private void OpenFile(string filePath, string fileName)
-        {
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException();
-            }
+            // close all tabs
+            this.CommandBindings.Add(
+                new CommandBinding(this._cmdCloseAllQueries, (sender, args) => this.CloseAllTabs()));
 
-            using (StreamReader sr = new StreamReader(filePath))
-            {
-                this.CreateNewTab(fileName, sr.ReadToEnd(), filePath);
-                sr.Close();
-            }
-        }
+            // close all tabs but current
+            this.CommandBindings.Add(
+                new CommandBinding(
+                    this._cmdCloseAllQueriesButThis, 
+                    (sender, args) => this.CloseAllTabsButThis((QueryTabItem)this.QueryTabControl.SelectedItem)));
 
-        private void OpenSaveDialog(QueryTabItem tab)
-        {
-            this.SaveDialog.FileName  = tab.Name;
+            // save query in current tab
+            this.CommandBindings.Add(
+                new CommandBinding(
+                    this._cmdSaveQuery, 
+                    (sender, args) => this.SaveQuery((QueryTabItem)this.QueryTabControl.SelectedItem)));
 
-            // Открываем диалог
-            this.SaveDialog.Filter = "Text documents (.txt)|*.txt";
-            this.SaveDialog.DefaultExt = ".txt";
-            DialogResult result = this.SaveDialog.ShowDialog();
+            // save query and create a new name for it in current tab
+            this.CommandBindings.Add(
+                new CommandBinding(
+                    this._cmdSaveQueryAs, 
+                    (sender, args) => this.SaveQueryAs((QueryTabItem)this.QueryTabControl.SelectedItem)));
 
-            // Если нажали "ОК"
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                // Сохраняем документ
-                var fileInfo = this.SaveFile(this.SaveDialog.FileName, tab.QueryText.Text);
-                tab.FilePath = fileInfo.FullName;
-                tab.SetHeader(fileInfo.Name);
-            }
-        }
+            // save all queries in all tabs
+            this.CommandBindings.Add(
+                new CommandBinding(this._cmdSaveAllQueries, (sender, args) => this.SaveAllQueries()));
 
-        private void NewTab()
-        {
-            this.CreateNewTab(this.GenerateNewTabName());
-        }
+            // execute query in current tab
+            this.CommandBindings.Add(
+                new CommandBinding(
+                    this._cmdExecuteQuery, 
+                    (sender, args) => this.Execute((QueryTabItem)this.QueryTabControl.SelectedItem)));
 
-        private void CloneTab(QueryTabItem tab)
-        {
-            this.CreateNewTab(this.GenerateNewTabName(), tab.QueryText.Text);
+            // export query result to excel file
+            this.CommandBindings.Add(
+                new CommandBinding(
+                    this._cmdExportToExcel, 
+                    (sender, args) => this.ExportToExcel((QueryTabItem)this.QueryTabControl.SelectedItem)));
+
+            // open configuration window
+            this.CommandBindings.Add(
+                new CommandBinding(this._cmdConfigureSettings, (sender, args) => this.OpenSettingsWindow()));
+
+            // close app
+            this.CommandBindings.Add(new CommandBinding(this._cmdExit, (sender, args) => this.Close()));
         }
 
         /// <summary>
-        /// Удаляет из коллекции переданный таб
+        /// Binds commands to hot keys
         /// </summary>
-        /// <param name="sender">
-        /// object
-        /// </param>
-        /// <param name="e">
-        /// EventArgs
-        /// </param>
-        private void CloseTab(QueryTabItem tab)
+        private void BindInputs()
         {
-            this.QueryTabControl.Items.Remove(tab);
+            // new query via ctrl + n
+            this.InputBindings.Add(new KeyBinding(this._cmdNewQuery, Key.N, ModifierKeys.Control));
+
+            // open query via ctrl + o
+            this.InputBindings.Add(new KeyBinding(this._cmdOpenQuery, Key.O, ModifierKeys.Control));
+
+            // close query via ctrl + f4
+            this.InputBindings.Add(new KeyBinding(this._cmdCloseQuery, Key.F4, ModifierKeys.Control));
+
+            // save query via ctrl + s
+            this.InputBindings.Add(new KeyBinding(this._cmdSaveQuery, Key.S, ModifierKeys.Control));
+
+            // execute query via f5
+            this.InputBindings.Add(new KeyBinding(this._cmdExecuteQuery, Key.F5, ModifierKeys.None));
+        }
+
+        /// <summary>
+        /// Binds menu items to commands
+        /// </summary>
+        private void BindMenuItems()
+        {
+            // create new tab
+            this.miNew.Command = this._cmdNewQuery;
+
+            // clone current tab
+            this.miClone.Command = this._cmdCloneQuery;
+
+            // open saved query in new tab
+            this.miOpen.Command = this._cmdOpenQuery;
+
+            // close current tab
+            this.miClose.Command = this._cmdCloseQuery;
+
+            // close all tabs
+            this.miCloseAll.Command = this._cmdCloseAllQueries;
+
+            // close all tabs but current
+            this.miCloseAllButThis.Command = this._cmdCloseAllQueriesButThis;
+
+            // save query in current tab
+            this.miSave.Command = this._cmdSaveQuery;
+
+            // save query and creat a new name for it in current tab
+            this.miSaveAs.Command = this._cmdSaveQueryAs;
+
+            // save all queries in all tabs
+            this.miSaveAll.Command = this._cmdSaveAllQueries;
+
+            // execute query in current tab
+            this.miExec.Command = this._cmdExecuteQuery;
+
+            // export query result to excel file
+            this.miExportToExcel.Command = this._cmdExportToExcel;
+
+            // open configuration window
+            this.miConfigure.Command = this._cmdConfigureSettings;
+            this.smSettings.Visibility = Visibility.Hidden; // unimplemented feature
+
+            // close app
+            this.miExit.Command = this._cmdExit;
+        }
+
+        /// <summary>
+        /// create new tab using a parent's content
+        /// </summary>
+        /// <param name="tab"></param>
+        private void CloneTab(QueryTabItem tab)
+        {
+            this.CreateNewTab(this.GenerateNewTabName(), tab.QueryText.Text);
         }
 
         private void CloseAllTabs()
@@ -270,18 +234,15 @@
             this.QueryTabControl.Items.Clear();
         }
 
-        /// <summary>
-        /// Удаляет из коллекции все табы кроме переданного
-        /// </summary>
-        /// <param name="tab">object</param>
-        /// <param name="e">EventArgs</param>
         private void CloseAllTabsButThis(QueryTabItem tab)
         {
+            // remove all tabs except current
             while (this.QueryTabControl.Items.Count > 1)
             {
                 for (int i = 0; i < this.QueryTabControl.Items.Count; i++)
                 {
-                    var index = this.QueryTabControl.Items.IndexOf(tab);
+                    // check index of current tab and delete if current index differs
+                    int index = this.QueryTabControl.Items.IndexOf(tab);
                     if (i != index)
                     {
                         this.QueryTabControl.Items.RemoveAt(i);
@@ -290,50 +251,37 @@
             }
         }
 
-        private void OpenQuery()
+        private void CloseTab(QueryTabItem tab)
         {
-            if (this.OpenDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                this.OpenFile(this.OpenDialog.FileName, this.OpenDialog.SafeFileName);
-            }
+            this.QueryTabControl.Items.Remove(tab);
         }
 
-        private void SaveQuery(QueryTabItem tab)
+        private void CreateNewTab(string name, string text = null, string filePath = null)
+        {
+            // increment global index counter for naming new tabs
+            this._itemIndexCounter++;
+
+            var newTab = new QueryTabItem(this._itemIndexCounter, name, text, filePath);
+            newTab.CloseEvent += this.CloseTab;
+            newTab.CloseAllButThisEvent += this.CloseAllTabsButThis;
+            newTab.SaveEvent += this.SaveQuery;
+            newTab.SaveAsEvent += this.SaveQueryAs;
+            newTab.NewEvent += tab => this.NewTab();
+            newTab.CloneEvent += this.CloneTab;
+
+            // add new tab to collection
+            this.QueryTabControl.Items.Add(newTab);
+            this.QueryTabControl.SelectedItem = newTab;
+        }
+
+        private void Execute(QueryTabItem tab)
         {
             if (tab == null)
             {
                 return;
             }
 
-            // Определяем - сохраненный или загруженный
-            if (string.IsNullOrWhiteSpace(tab.FilePath))
-            {
-                // Новый. Открываем диалог.
-                this.OpenSaveDialog(tab);
-            }
-            else
-            {
-                // Старый. Просто перезаписываем файл
-                this.SaveFile(tab.FilePath, tab.QueryText.Text);
-            }
-        }
-
-        private void SaveQueryAs(QueryTabItem tab)
-        {
-            this.OpenSaveDialog(tab);
-        }
-
-        private void SaveAllQueries()
-        {
-            foreach (QueryTabItem item in this.QueryTabControl.Items.SourceCollection)
-            {
-                this.OpenSaveDialog(item);
-            }
-        }
-
-        private void Execute(QueryTabItem tab)
-        {
-            if (tab == null)
+            if (string.IsNullOrWhiteSpace(tab.QueryText.Text))
             {
                 return;
             }
@@ -348,31 +296,218 @@
                 return;
             }
 
-            this.SaveDialog.Filter = "Excel 2007 documents (.xlsx)|*.xlsx";
-            this.SaveDialog.DefaultExt = "xlsx";
-            DialogResult result = this.SaveDialog.ShowDialog();
+            this._saveDialog.Filter = "Excel 2007 documents (.xlsx)|*.xlsx";
+            this._saveDialog.DefaultExt = "xlsx";
+            DialogResult result = this._saveDialog.ShowDialog();
 
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                var fileInfo = tab.ExportToExcel(this.SaveDialog.FileName);
-                var msg = fileInfo.Exists ? "Экспорт успешно выполнен!" : "Не удалось выполнить экспорт!";
+                FileInfo fileInfo = tab.ExportToExcel(this._saveDialog.FileName);
+                string msg = fileInfo.Exists ? Resource.Export_Success : Resource.Export_Fail;
                 MessageBox.Show(msg);
             }
         }
 
         private string GenerateNewTabName()
         {
-            this.ItemIndexCounter++;
-            string name = string.Format("Query {0}", this.ItemIndexCounter);
+            this._itemIndexCounter++;
+
+            string name = string.Format("Query {0}", this._itemIndexCounter);
             return name;
         }
 
-        #endregion
-
-        #region Events
-
-        private void SubscribeEventHandlers()
+        /// <summary>
+        /// Initialize commands
+        /// </summary>
+        private void InitCommands()
         {
+            this._cmdNewQuery = new RoutedCommand("NewQueryCommand", this.GetType());
+            this._cmdCloneQuery = new RoutedCommand("CloneQueryCommand", this.GetType());
+            this._cmdOpenQuery = new RoutedCommand("OpenQueryCommand", this.GetType());
+            this._cmdCloseQuery = new RoutedCommand("CloseQueryCommand", this.GetType());
+            this._cmdCloseAllQueries = new RoutedCommand("CloseAllQueries", this.GetType());
+            this._cmdCloseAllQueriesButThis = new RoutedCommand("CloseAllQueriesButThisCommand", this.GetType());
+            this._cmdSaveQuery = new RoutedCommand("SaveQueryCommand", this.GetType());
+            this._cmdSaveQueryAs = new RoutedCommand("SaveQueryAs", this.GetType());
+            this._cmdSaveAllQueries = new RoutedCommand("SaveAllQueriesCommand", this.GetType());
+            this._cmdExecuteQuery = new RoutedCommand("ExecuteCommand", this.GetType());
+            this._cmdExportToExcel = new RoutedCommand("ExportToExcelCommand", this.GetType());
+            this._cmdConfigureSettings = new RoutedCommand("ConfigureSettings", this.GetType());
+            this._cmdExit = new RoutedCommand("ExitCommand", this.GetType());
+        }
+
+        /// <summary>
+        /// Initialize save / open file dialogs
+        /// </summary>
+        private void InitFileDialogs()
+        {
+            this._saveDialog = new SaveFileDialog
+                {
+                   CheckPathExists = true, CreatePrompt = true, OverwritePrompt = true 
+                };
+            this._openDialog = new OpenFileDialog();
+        }
+
+        private void InitializeObjects()
+        {
+            this.InitFileDialogs();
+            this.InitCommands();
+            this.BindCommands();
+            this.BindMenuItems();
+            this.BindInputs();
+        }
+
+        /// <summary>
+        /// Create new tab
+        /// </summary>
+        private void NewTab()
+        {
+            this.CreateNewTab(this.GenerateNewTabName());
+        }
+
+        private void OpenFile(string filePath, string fileName)
+        {
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException();
+            }
+
+            using (var sr = new StreamReader(filePath))
+            {
+                this.CreateNewTab(fileName, sr.ReadToEnd(), filePath);
+                sr.Close();
+            }
+        }
+
+        private void OpenQuery()
+        {
+            if (this._openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                this.OpenFile(this._openDialog.FileName, this._openDialog.SafeFileName);
+            }
+        }
+
+        private void OpenSaveDialog(QueryTabItem tab)
+        {
+            this._saveDialog.FileName = tab.Name;
+
+            // Open dialog
+            this._saveDialog.Filter = "Text documents (.txt)|*.txt";
+            this._saveDialog.DefaultExt = ".txt";
+            DialogResult result = this._saveDialog.ShowDialog();
+
+            // Pressed OK
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                // Save document
+                FileInfo fileInfo = this.SaveFile(this._saveDialog.FileName, tab.QueryText.Text);
+                tab.FilePath = fileInfo.FullName;
+                tab.SetHeader(fileInfo.Name);
+            }
+        }
+
+        private void OpenSettingsWindow()
+        {
+            var settings = new SettingsMainWindow();
+            settings.ShowDialog();
+        }
+
+        private void SaveAllQueries()
+        {
+            foreach (QueryTabItem item in this.QueryTabControl.Items.SourceCollection)
+            {
+                this.OpenSaveDialog(item);
+            }
+        }
+
+        private FileInfo SaveFile(string filePath, string fileBody)
+        {
+            // create new file
+            using (FileStream fs = File.Create(filePath))
+            {
+                byte[] info = new UTF8Encoding(true).GetBytes(fileBody);
+                fs.Write(info, 0, info.Length);
+            }
+
+            return new FileInfo(filePath);
+        }
+
+        private void SaveQuery(QueryTabItem tab)
+        {
+            if (tab == null)
+            {
+                return;
+            }
+
+            // loaded or new
+            if (string.IsNullOrWhiteSpace(tab.FilePath))
+            {
+                // new
+                this.OpenSaveDialog(tab);
+            }
+            else
+            {
+                // loaded. just rewrite
+                this.SaveFile(tab.FilePath, tab.QueryText.Text);
+            }
+        }
+
+        private void SaveQueryAs(QueryTabItem tab)
+        {
+            this.OpenSaveDialog(tab);
+        }
+
+        /// <summary>
+        /// Bind mouse events to handlers
+        /// </summary>
+        private void BindMouseEventHandlers()
+        {
+            this.miNew.IsEnabled = true;
+
+            // for each menu set accessibility on mouse clicking
+
+            // menu "File"
+            this.smFile.PreviewMouseDown += (sender, args) =>
+            {
+                bool isEnable = this.QueryTabControl.Items.Count != 0;
+                this.miClone.IsEnabled = isEnable;
+                this.miClose.IsEnabled = isEnable;
+                this.miCloseAll.IsEnabled = isEnable;
+                this.miCloseAllButThis.IsEnabled = isEnable;
+                this.miSave.IsEnabled = isEnable;
+                this.miSaveAs.IsEnabled = isEnable;
+                this.miSaveAll.IsEnabled = isEnable;
+
+                // additional check
+                if (isEnable)
+                {
+                    var queryTabItem = (QueryTabItem)this.QueryTabControl.SelectedItem;
+                    this.miCloseAllButThis.IsEnabled = this.QueryTabControl.Items.Count > 1;
+                    this.miSaveAll.IsEnabled = this.QueryTabControl.Items.Count > 1;
+                    this.miSave.IsEnabled = !string.IsNullOrWhiteSpace(queryTabItem.FilePath);
+                }
+            };
+
+            // menu "Query"
+            this.smQuery.PreviewMouseDown += (sender, args) =>
+            {
+                bool isEnable = this.QueryTabControl.Items.Count != 0;
+                this.miExec.IsEnabled = isEnable;
+                this.miExportToExcel.IsEnabled = isEnable;
+
+                // additional check
+                if (isEnable)
+                {
+                    var queryTabItem = (QueryTabItem)this.QueryTabControl.SelectedItem;
+
+                    // disable for empty query text
+                    this.miExec.IsEnabled = !string.IsNullOrWhiteSpace(queryTabItem.QueryText.Text);
+
+                    // disable for null results
+                    this.miExportToExcel.IsEnabled = queryTabItem.QueryResult.ItemsSource != null;
+                }
+            };
+
             this.EventLabel.MouseDoubleClick += (sender, args) => this.NewTab();
         }
 

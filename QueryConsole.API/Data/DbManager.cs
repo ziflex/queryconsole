@@ -1,3 +1,11 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DbManager.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The db manager.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 namespace QueryConsole.API.Data
 {
     using System;
@@ -7,56 +15,62 @@ namespace QueryConsole.API.Data
     using QueryConsole.API.Infrastructure;
     using QueryConsole.API.Models;
 
-    public class DbManager : IDisposable 
+    public class DbManager : IDisposable
     {
-        #region Members
-
-        private DbConfiguration _configuration;
+        #region Fields
 
         private DbProviderFactory _dpFactory;
 
-        private bool disposed = false;
+        private bool _disposed;
 
         #endregion
 
-        #region Properties
+        #region Constructors and Destructors
 
-        public DbConfiguration Configuration
-        {
-            get
-            {
-                return this._configuration;
-            }
-        }
-
-        #endregion
-
-        #region Constructor
-
+        /// <summary>
+        /// Creates new instance of DbManager
+        /// </summary>
+        /// <param name="configuration">Database configuration</param>
         public DbManager(DbConfiguration configuration)
         {
-            this._configuration = configuration;
-            this._dpFactory     = DbProviderFactories.GetFactory(configuration.Provider);
+            this.Configuration = configuration;
+            this._dpFactory = DbProviderFactories.GetFactory(configuration.Provider);
+        }
+
+        ~DbManager()
+        {
+            this.CleanUp(false);
         }
 
         #endregion
 
-        #region Public Methods
-        
+        #region Public Properties
+
         /// <summary>
-        /// Выполняет запрос на основании переданного текста и возвращает таблицу данных
+        /// Current database configuration
         /// </summary>
-        /// <param name="queryString">string</param>
-        /// <returns>DataTable</returns>
+        public DbConfiguration Configuration { get; private set; }
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        public void Dispose()
+        {
+            this.CleanUp(true);
+
+            GC.SuppressFinalize(this);
+        }
+
         public DataSet ExecQuery(string queryString)
         {
-            DataSet result = new DataSet();
-            using (var da = this._dpFactory.CreateDataAdapter())
+            var result = new DataSet();
+            using (DbDataAdapter da = this._dpFactory.CreateDataAdapter())
             {
-                var connection = this._dpFactory.CreateConnection();
+                DbConnection connection = this._dpFactory.CreateConnection();
                 connection.ConnectionString = this.Configuration.ConnectionString.Value;
-                
-                var command = this._dpFactory.CreateCommand();
+
+                DbCommand command = this._dpFactory.CreateCommand();
                 command.Connection = connection;
                 command.CommandText = QueryParser.Parse(queryString);
 
@@ -67,45 +81,22 @@ namespace QueryConsole.API.Data
             return result;
         }
 
-        public void Dispose()
-        {
-            this.CleanUp(true);
-
-            GC.SuppressFinalize(this);
-        }
-
         #endregion
 
-        #region Private Methods
+        #region Methods
 
         private void CleanUp(bool disposing)
         {
-            if (!this.disposed)
+            if (!this._disposed)
             {
-                // Если disposing равно true, должно осуществляться
-                // освобождение всех управляемых ресурсов.
                 if (disposing)
                 {
-                    this._configuration = null;
+                    this.Configuration = null;
                     this._dpFactory = null;
                 }
-
-                // Тут очистка неуправляемых ресурсов
             }
 
-            this.disposed = true;
-        }
-
-        #endregion
-
-        #region Destructor
-
-        ~DbManager()
-        {
-            // Вызов спомогательного метода.
-            // Значение false указывает на то, что
-            // очистка была инициирована сборщиком мусора
-            this.CleanUp(false);
+            this._disposed = true;
         }
 
         #endregion

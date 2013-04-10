@@ -1,6 +1,13 @@
-﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AssemblyInfo.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   AssemblyInfo.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -29,25 +36,19 @@ using System.Windows;
 //строка внизу для обеспечения соответствия настройки UICulture в файле проекта.
 
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
-
-
-[assembly: ThemeInfo(
-    ResourceDictionaryLocation.None, //где расположены словари ресурсов по конкретным тематикам
-    //(используется, если ресурс не найден на странице 
+[assembly: ThemeInfo(ResourceDictionaryLocation.None, // где расположены словари ресурсов по конкретным тематикам
+    // (используется, если ресурс не найден на странице 
     // или в словарях ресурсов приложения)
-    ResourceDictionaryLocation.SourceAssembly //где расположен словарь универсальных ресурсов
-    //(используется, если ресурс не найден на странице, 
+    ResourceDictionaryLocation.SourceAssembly // где расположен словарь универсальных ресурсов
+    // (используется, если ресурс не найден на странице, 
     // в приложении или в каких-либо словарях ресурсов для конкретной темы)
-)]
-
+    )]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
-//
 //      Основной номер версии
 //      Дополнительный номер версии 
 //      Номер построения
 //      Редакция
-//
 // Можно задать все значения или принять номер построения и номер редакции по умолчанию, 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]

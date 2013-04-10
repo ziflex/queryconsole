@@ -52,6 +52,7 @@
     <Compile Include="Models\DbConfiguration.cs" />
     <Compile Include="Models\DbConnectionString.cs" />
     <Compile Include="Models\DbProvider.cs" />
+    <Compile Include="Models\IConfiguration.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
