@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace QueryConsole.API.Models
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Configuration;
     using System.IO;
@@ -17,6 +18,8 @@ namespace QueryConsole.API.Models
 
     public class AppConfiguration : IConfiguration
     {
+        private const string AutocompleteDefault = "default.autocomplete";
+
         #region Fields
 
         private FileInfo _configFile;
@@ -97,7 +100,48 @@ namespace QueryConsole.API.Models
                 }
 
                 result.Add(
-                    new DbProvider(provider.Attribute("name").Value, provider.Attribute("value").Value, connStrList));
+                    new DbProvider(provider.Attribute("name").Value, provider.Attribute("value").Value, connStrList, this.GetAutocompleteSource(provider)));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Reads xml-attribute and gets collection
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
+        private IEnumerable<string> GetAutocompleteSource(XElement provider)
+        {
+            var attr = provider.Attribute("autocomplete");
+            var filePath = string.Format("{0}\\{1}", this._configFile.DirectoryName, attr != null ? attr.Value : AutocompleteDefault);
+            return this.GetAutocompleteSource(new FileInfo(filePath));
+        }
+
+        /// <summary>
+        /// Reads filed and populates collection
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        private IEnumerable<string> GetAutocompleteSource(FileInfo file)
+        {
+            IEnumerable<string> result = null;
+
+            if (!file.Exists)
+            {
+                return result;
+            }
+
+            string text;
+
+            using (var reader = file.OpenText())
+            {
+                text = reader.ReadToEnd();
+            }
+
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                result = new List<string>(text.Replace("\r\n", "").Split(new char[] { ',' }));
             }
 
             return result;

@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Data\DbManager.cs" />
     <Compile Include="Infrastructure\ExcelWriter.cs" />
+    <Compile Include="Infrastructure\ObservableStringBuilder.cs" />
     <Compile Include="Infrastructure\QueryParser.cs" />
     <Compile Include="Models\AppConfiguration.cs" />
     <Compile Include="Models\DbConfiguration.cs" />

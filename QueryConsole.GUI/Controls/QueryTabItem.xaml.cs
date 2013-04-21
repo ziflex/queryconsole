@@ -374,6 +374,7 @@ namespace QueryConsole.Controls
             if (this.ProviderList.Items.Count != 0)
             {
                 this.ProviderList.SelectedItem = this.ProviderList.Items[0];
+                this.QueryText.AutocompleteSource = ((DbProvider)this.ProviderList.SelectedItem).AutocompleteSource;
             }
         }
 

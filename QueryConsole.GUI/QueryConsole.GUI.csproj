@@ -90,11 +90,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\QueryTextBox.cs" />
     <Compile Include="Controls\Settings\SettingsConnectionTab.xaml.cs">
       <DependentUpon>SettingsConnectionTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Settings\SettingsMainWindow.xaml.cs">
       <DependentUpon>SettingsMainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions\Autocompletion\Autocomplete.cs">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

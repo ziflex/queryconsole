@@ -1,40 +1,36 @@
-﻿<Window x:Class="QueryConsole.Controls.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Query Console" Height="600" Width="800"
-        Background="WhiteSmoke">
-  <Grid Name="MainGrid">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"></RowDefinition>
-      <RowDefinition Height="25"></RowDefinition>
-      <RowDefinition Height="260*"></RowDefinition>
-    </Grid.RowDefinitions>
-    <Menu Name="MainMenu" Grid.Row="1" IsMainMenu="True" Background="{x:Null}" VerticalAlignment="Top"
-          HorizontalAlignment="Left" Height="25">
-      <MenuItem Name="smFile" Header="_File">
-        <MenuItem Name="miNew" Header="New" IsEnabled="True" InputGestureText="Ctrl+N" />
-        <MenuItem Name="miClone" Header="Clone" />
-        <MenuItem Name="miOpen" Header="Open" InputGestureText="Ctrl+O" />
-        <Separator />
-        <MenuItem Name="miClose" Header="Close" InputGestureText="Ctrl+F4" />
-        <MenuItem Name="miCloseAll" Header="Close all" />
-        <MenuItem Name="miCloseAllButThis" Header="Close all but this" />
-        <Separator />
-        <MenuItem Name="miSave" Header="Save" InputGestureText="Ctrl+S" />
-        <MenuItem Name="miSaveAs" Header="Save as..." />
-        <MenuItem Name="miSaveAll" Header="Save all" />
-        <Separator />
-        <MenuItem Name="miExit" Header="Exit" />
-      </MenuItem>
-      <MenuItem Name="smQuery" Header="_Query">
-        <MenuItem Name="miExec" Header="Execute query" InputGestureText="F5" />
-        <Separator />
-        <MenuItem Name="miExportToExcel" Header="Export to excel" />
-      </MenuItem>
-      <MenuItem Name="smSettings" Header="_Settings">
-        <MenuItem Name="miConfigure" Header="Configure" />
-      </MenuItem>
-    </Menu>
-    <Label Grid.Row="2" Name="EventLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-    <TabControl Grid.Row="2" Name="QueryTabControl" Background="WhiteSmoke" HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch"></TabControl>
-  </Grid>
+﻿<Window x:Class="QueryConsole.Controls.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Height="600" Width="800" Background="WhiteSmoke" MinHeight="300" MinWidth="500" Title=".NET Query Console">
+    <Grid Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="260*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="1" Height="25" Background="{x:Null}" HorizontalAlignment="Left" IsMainMenu="True" Name="MainMenu" VerticalAlignment="Top">
+            <MenuItem Header="_File" Name="smFile">
+                <MenuItem Header="New" InputGestureText="Ctrl+N" IsEnabled="True" Name="miNew" />
+                <MenuItem Header="Clone" Name="miClone" />
+                <MenuItem Header="Open" InputGestureText="Ctrl+O" Name="miOpen" />
+                <Separator />
+                <MenuItem Header="Close" InputGestureText="Ctrl+F4" Name="miClose" />
+                <MenuItem Header="Close all" Name="miCloseAll" />
+                <MenuItem Header="Close all but this" Name="miCloseAllButThis" />
+                <Separator />
+                <MenuItem Header="Save" InputGestureText="Ctrl+S" Name="miSave" />
+                <MenuItem Header="Save as..." Name="miSaveAs" />
+                <MenuItem Header="Save all" Name="miSaveAll" />
+                <Separator />
+                <MenuItem Header="Exit" Name="miExit" />
+            </MenuItem>
+            <MenuItem Header="_Query" Name="smQuery">
+                <MenuItem Header="Execute query" InputGestureText="F5" Name="miExec" />
+                <Separator />
+                <MenuItem Header="Export to excel" Name="miExportToExcel" />
+            </MenuItem>
+            <MenuItem Header="_Settings" Name="smSettings">
+                <MenuItem Header="Configure" Name="miConfigure" />
+            </MenuItem>
+        </Menu>
+        <Label Grid.Row="2" HorizontalAlignment="Stretch" Name="EventLabel" VerticalAlignment="Stretch" />
+        <TabControl Grid.Row="2" Background="WhiteSmoke" HorizontalContentAlignment="Stretch" Name="QueryTabControl" VerticalContentAlignment="Stretch"></TabControl>
+    </Grid>
 </Window>
