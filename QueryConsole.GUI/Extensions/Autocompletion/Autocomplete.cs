@@ -61,6 +61,7 @@ namespace QueryConsole.Extensions.Autocompletion
             // last chars of started word
             this._lastWords = new ObservableStringBuilder();
 
+            // default empty source
             this.DataSource = new List<string>();
 
             this.BindEvents();
@@ -128,7 +129,7 @@ namespace QueryConsole.Extensions.Autocompletion
                 case Key.Down:
                     if (this.IsVisible)
                     {
-                        this._listBox.SelectedIndex += 1;
+                        this.ChangeSelectedIndex(this._listBox.SelectedIndex + 1);
                         result = true;
                     }
 
@@ -136,7 +137,7 @@ namespace QueryConsole.Extensions.Autocompletion
                 case Key.Up:
                     if (this.IsVisible)
                     {
-                        this._listBox.SelectedIndex -= 1;
+                        this.ChangeSelectedIndex(this._listBox.SelectedIndex - 1);
                         result = true;
                     }
 
@@ -144,7 +145,7 @@ namespace QueryConsole.Extensions.Autocompletion
                 case Key.PageDown:
                     if (this.IsVisible)
                     {
-                        this._listBox.SelectedIndex += 1;
+                        this.ChangeSelectedIndex(this._listBox.SelectedIndex + 1);
                         result = true;
                     }
 
@@ -152,7 +153,7 @@ namespace QueryConsole.Extensions.Autocompletion
                 case Key.PageUp:
                     if (this.IsVisible)
                     {
-                        this._listBox.SelectedIndex -= 1;
+                        this.ChangeSelectedIndex(this._listBox.SelectedIndex - 1);
                         result = true;
                     }
 
@@ -160,7 +161,7 @@ namespace QueryConsole.Extensions.Autocompletion
                 case Key.Home:
                     if (this.IsVisible)
                     {
-                        this._listBox.SelectedIndex = 0;
+                        this.ChangeSelectedIndex(0);
                         result = true;
                     }
 
@@ -168,7 +169,7 @@ namespace QueryConsole.Extensions.Autocompletion
                 case Key.End:
                     if (this.IsVisible)
                     {
-                        this._listBox.SelectedIndex = this._listBox.Items.Count - 1;
+                        this.ChangeSelectedIndex(this._listBox.Items.Count - 1);
                         result = true;
                     }
 
@@ -210,6 +211,21 @@ namespace QueryConsole.Extensions.Autocompletion
             return result;
         }
 
+        private void ChangeSelectedIndex(int newIndex)
+        {
+            if (newIndex < 0)
+            {
+                newIndex = this._listBox.Items.Count + newIndex;
+            }
+            else if (newIndex > (this._listBox.Items.Count - 1))
+            {
+                newIndex = 0;
+            }
+
+            this._listBox.SelectedIndex = newIndex;
+            this._listBox.ScrollIntoView(this._listBox.SelectedItem);
+        }
+
         private void InsertWord(string text, int removeFrom)
         {
             this._textBox.Text = this._textBox.Text.Remove(removeFrom);
@@ -225,7 +241,7 @@ namespace QueryConsole.Extensions.Autocompletion
             }
 
             string text = string.Format("{0} ", this._listBox.SelectedItem);
-            int removeFrom = this._textBox.CaretIndex - this._lastWords.Length;
+            int removeFrom = this._textBox.CaretIndex > 0 ? this._textBox.CaretIndex - this._lastWords.Length : 0;
 
             this.InsertWord(text, removeFrom);
 

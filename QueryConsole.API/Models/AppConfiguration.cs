@@ -12,6 +12,7 @@ namespace QueryConsole.API.Models
     using System.Collections.ObjectModel;
     using System.Configuration;
     using System.IO;
+    using System.Linq;
     using System.Xml.Linq;
 
     using QueryConsole.Resources;
@@ -141,7 +142,7 @@ namespace QueryConsole.API.Models
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                result = new List<string>(text.Replace("\r\n", "").Split(new char[] { ',' }));
+                result = new List<string>(text.Replace("\r\n", string.Empty).Split(new[] { ',' }).Select(i => i.Trim()).OrderBy(i => i));
             }
 
             return result;
