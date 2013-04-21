@@ -24,6 +24,17 @@ Here is an example of possible file structure:
   </providers>
 </settings>
   ```
+  
+###Autocompletion
+.NET Query Console provides default autocompetion.
+But you can create your own content by creating a new file with ".autocomplete' extension and define 
+it in configuration file:
+  
+  ```
+  <provider name="SqlProvider" value="System.Data.SqlClient" autocomplete="Sql.autocomplete">
+   ...
+   </provider>
+  ```
 
 ##Dependencies
 ============
