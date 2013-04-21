@@ -25,6 +25,11 @@ Here is an example of possible file structure:
 </settings>
   ```
   
+##Features
+
+###Multitabs
+.NET Query Console allows you to write your queries in different tabs, save for later opening and, of course, open saved earlier. 
+
 ###Autocompletion
 .NET Query Console provides default autocompetion.
 But you can create your own content by creating a new file with ".autocomplete' extension and define 
@@ -35,6 +40,9 @@ it in configuration file:
    ...
    </provider>
   ```
+  
+###Export to excel
+You can easily export query result into .xls file - just click 'Query->Export to excel'.
 
 ##Dependencies
 ============
