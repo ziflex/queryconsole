@@ -142,7 +142,7 @@ namespace QueryConsole.API.Models
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                result = new List<string>(text.Replace("\r\n", string.Empty).Split(new[] { ',' }).Select(i => i.Trim()).OrderBy(i => i));
+                result = new List<string>(text.Split(new[] { ',' }).Select(i => i.Trim().Replace("\r\n", string.Empty).ToUpper()).OrderBy(i => i));
             }
 
             return result;
