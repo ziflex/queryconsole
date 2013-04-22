@@ -28,7 +28,7 @@ namespace QueryConsole.API.Models
         /// List of connections
         /// </param>
         public DbProvider(string name, string value, ObservableCollection<DbConnectionString> connectionStrings)
-            : this(name, value, connectionStrings, null)
+            : this(name, value, connectionStrings, new List<string>())
         {
         }
 

@@ -126,11 +126,9 @@ namespace QueryConsole.API.Models
         /// <returns></returns>
         private IEnumerable<string> GetAutocompleteSource(FileInfo file)
         {
-            IEnumerable<string> result = null;
-
             if (!file.Exists)
             {
-                return result;
+                return new List<string>();
             }
 
             string text;
@@ -140,12 +138,14 @@ namespace QueryConsole.API.Models
                 text = reader.ReadToEnd();
             }
 
+            IEnumerable<string> result = null;
+
             if (!string.IsNullOrWhiteSpace(text))
             {
                 result = new List<string>(text.Split(new[] { ',' }).Select(i => i.Trim().Replace("\r\n", string.Empty).ToUpper()).OrderBy(i => i));
             }
 
-            return result;
+            return result ?? new List<string>();
         }
 
         /// <summary>

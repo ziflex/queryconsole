@@ -60,18 +60,36 @@ namespace QueryConsole.Extensions.Autocompletion
 
             // last chars of started word
             this._lastWords = new ObservableStringBuilder();
-
-            // default empty source
-            this.DataSource = new List<string>();
-
-            this.BindEvents();
         }
 
         #endregion
 
         #region Public Properties
 
-        public IEnumerable<string> DataSource { get; set; }
+        private IEnumerable<string> _dataSource;
+
+        public IEnumerable<string> DataSource
+        {
+            get
+            {
+                return this._dataSource;
+            }
+
+            set
+            {
+                if (value != null && value.Any())
+                {
+                    this.BindEvents();
+                }
+                else
+                {
+                    // don't listen events if there is no autocompletion content
+                    this.UnbindEvents();
+                }
+
+                this._dataSource = value;
+            }
+        }
 
         public bool IsVisible
         {
@@ -90,6 +108,9 @@ namespace QueryConsole.Extensions.Autocompletion
 
         #region Methods
 
+        /// <summary>
+        /// Adds listeners
+        /// </summary>
         private void BindEvents()
         {
             this._textBox.PreviewTextInput += this.ListenPreviewTextInput;
@@ -97,9 +118,27 @@ namespace QueryConsole.Extensions.Autocompletion
 
             this._listBox.GotFocus += this.OnGotFocus;
 
-            this._lastWords.ContentChanged += (sender, args) => this.Run();
+            this._lastWords.ContentChanged += this.Run;
         }
 
+        /// <summary>
+        /// Removes all listeneres
+        /// </summary>
+        private void UnbindEvents()
+        {
+            this._textBox.PreviewTextInput -= this.ListenPreviewTextInput;
+            this._textBox.PreviewKeyDown -= this.ListenKeyDown;
+
+            this._listBox.GotFocus -= this.OnGotFocus;
+
+            this._lastWords.ContentChanged -= this.Run;
+        }
+
+        /// <summary>
+        /// Handles input keys
+        /// </summary>
+        /// <param name="key">Input key</param>
+        /// <returns>Handled or not</returns>
         private bool HandleKey(Key key)
         {
             bool result = false;
@@ -114,9 +153,8 @@ namespace QueryConsole.Extensions.Autocompletion
                     else
                     {
                         // get last word previously inputted
-                        int lineIndex = this._textBox.GetLineIndexFromCharacterIndex(this._textBox.CaretIndex);
-                        string lineText = this._textBox.GetLineText(lineIndex);
-                        string lastWord = lineText.Split(' ').LastOrDefault();
+                        var words = this.GetCurrentLineText().Split(' ');
+                        var lastWord = words[words.Length - 1];
 
                         if (!string.IsNullOrWhiteSpace(lastWord))
                         {
@@ -211,6 +249,10 @@ namespace QueryConsole.Extensions.Autocompletion
             return result;
         }
 
+        /// <summary>
+        /// Changes selection item in list box
+        /// </summary>
+        /// <param name="newIndex">item new index</param>
         private void ChangeSelectedIndex(int newIndex)
         {
             if (newIndex < 0)
@@ -226,11 +268,13 @@ namespace QueryConsole.Extensions.Autocompletion
             this._listBox.ScrollIntoView(this._listBox.SelectedItem);
         }
 
-        private void InsertWord(string text, int removeFrom)
+        private void InsertWord(string text, int removeFrom, int removeCount)
         {
-            this._textBox.Text = this._textBox.Text.Remove(removeFrom);
-            this._textBox.AppendText(text);
-            this._textBox.CaretIndex = this._textBox.Text.Length;
+            // remove inputed chars and insert completed word
+            this._textBox.Text = this._textBox.Text.Remove(removeFrom, removeCount).Insert(removeFrom, text);
+
+            // set caret after inserted word
+            this._textBox.CaretIndex = removeFrom + text.Length;
         }
 
         private void InsertWord()
@@ -243,7 +287,7 @@ namespace QueryConsole.Extensions.Autocompletion
             string text = string.Format("{0} ", this._listBox.SelectedItem);
             int removeFrom = this._textBox.CaretIndex > 0 ? this._textBox.CaretIndex - this._lastWords.Length : 0;
 
-            this.InsertWord(text, removeFrom);
+            this.InsertWord(text, removeFrom, this._lastWords.Length);
 
             this.IsVisible = false;
             this._lastWords.Clear();
@@ -259,12 +303,22 @@ namespace QueryConsole.Extensions.Autocompletion
             this._lastWords.Append(e.Text);
         }
 
+        /// <summary>
+        /// Finds mathced words
+        /// </summary>
+        /// <param name="text">inputted chars</param>
+        /// <returns>list of matched words</returns>
         private IEnumerable<string> Match(string text)
         {
             return this.DataSource.Where(
                 i => !string.IsNullOrWhiteSpace(text) && i.ToUpper().StartsWith(text.ToUpper()));
         }
 
+        /// <summary>
+        /// On each getting focus inputs selected word
+        /// </summary>
+        /// <param name="sender">list box</param>
+        /// <param name="e">args</param>
         private void OnGotFocus(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
@@ -273,10 +327,13 @@ namespace QueryConsole.Extensions.Autocompletion
             this._textBox.Focus();
         }
 
+        /// <summary>
+        /// Refresh list box location
+        /// </summary>
         private void ResetLocation()
         {
             Rect rect = this._textBox.GetRectFromCharacterIndex(this._textBox.CaretIndex);
-            double left = rect.X >= 15 ? rect.X : 15;
+            double left = rect.X >= 5 ? rect.X : 5;
             double top = rect.Y >= 20 ? rect.Y + 20 : 20;
             left += this._textBox.Padding.Left;
             top += this._textBox.Padding.Top;
@@ -290,7 +347,12 @@ namespace QueryConsole.Extensions.Autocompletion
             this._listBox.SetCurrentValue(FrameworkElement.MarginProperty, new Thickness(left, top, 0, 0));
         }
 
-        private void Run()
+        /// <summary>
+        /// Run autocompletion
+        /// </summary>
+        /// <param name="sender">Text box</param>
+        /// <param name="eventArgs">args</param>
+        private void Run(object sender, EventArgs eventArgs)
         {
             // don't change position if listbox is opened 
             if (!this.IsVisible)
@@ -302,6 +364,10 @@ namespace QueryConsole.Extensions.Autocompletion
             this.Run(this._lastWords.ToString());
         }
 
+        /// <summary>
+        /// Populates list box datasource by matched words
+        /// </summary>
+        /// <param name="word"></param>
         private void Run(string word)
         {
             // find matching words
@@ -310,6 +376,12 @@ namespace QueryConsole.Extensions.Autocompletion
 
             // show listbox if it doesn't empty
             this.IsVisible = this._listBox.HasItems;
+        }
+
+        private string GetCurrentLineText()
+        {
+            int lineIndex = this._textBox.GetLineIndexFromCharacterIndex(this._textBox.CaretIndex);
+            return this._textBox.GetLineText(lineIndex);
         }
 
         #endregion
